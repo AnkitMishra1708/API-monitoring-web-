@@ -17,6 +17,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+import { userRoute } from "./modules/users/user.route.js";
+
+app.use("/api/v1/users", userRoute);
+
 app.use(errorHandler);
 
 export { app };
