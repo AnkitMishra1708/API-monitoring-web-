@@ -1,6 +1,5 @@
 import express from "express";
-import { validate } from "../../middlewares/validate.middleware.js";
-import { verifyJwt } from "../../middlewares/auth.middleware.js";
+import { verifyJwt, validate } from "../../middlewares/index.js";
 import {
   registerSchema,
   loginSchema,
