@@ -55,7 +55,7 @@ export const registerUserService = async (data) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering user.",
+      "Something went wrong while creating user.",
       error.message
     );
   }
@@ -91,7 +91,7 @@ export const loginUserService = async (data) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering user.",
+      "Something went wrong while login user.",
       error.message
     );
   }
@@ -117,7 +117,7 @@ export const logoutUserService = async (userId) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering user.",
+      "Something went wrong while logging out user.",
       error.message
     );
   }
@@ -149,7 +149,7 @@ export const refreshAccessTokenService = async (incomingRefreshToken) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering user.",
+      "Something went wrong while refreshing access token.",
       error.message
     );
   }
@@ -198,7 +198,7 @@ export const changePasswordService = async (userId, password) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while registering user.",
+      "Something went wrong while changing password.",
       error.message
     );
   }
