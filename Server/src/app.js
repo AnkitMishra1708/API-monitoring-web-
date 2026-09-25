@@ -19,9 +19,11 @@ app.use(cookieParser());
 
 import { userRoute } from "./modules/users/user.route.js";
 import { jobRoute } from "./modules/jobs/job.route.js";
+import { executionRoute } from "./modules/executions/execution.route.js";
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/jobs", jobRoute);
+app.use("/api/v1/executions", executionRoute);
 
 app.use(errorHandler);
 
