@@ -1,15 +1,33 @@
 import { ApiError } from "../../utils/index.js";
 import { Execution } from "./execution.model.js";
+import { Job } from "../jobs/job.model.js";
 
-export const createExecutionService = async (jobId, attempts) => {
+export const executeJobService = async (jobId) => {
   try {
-    const execution = await Execution.create({
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      throw new ApiError(400, "Job not found.");
+    }
+    const startTime = performance.now();
+    const response = await fetch(job.url);
+    const endTime = performance.now();
+    const responseTime = endTime - startTime;
+
+    const updateExecution = await Execution.create({
       jobId,
-      status: attempts[0].statusCode < 400 ? "Success" : "Failed",
-      attempts: attempts,
+      status: response.status < 400 ? "Success" : "Failed",
+      attempts: [
+        {
+          attempt: 1,
+          statusCode: response.status,
+          message: response.statusText,
+          responseTime,
+        },
+      ],
     });
 
-    return execution;
+    return updateExecution;
   } catch (error) {
     if (error instanceof ApiError) throw error;
 
