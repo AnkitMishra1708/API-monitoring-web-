@@ -1,18 +1,15 @@
 import { AsyncHandler, ApiResponse } from "../../utils/index.js";
 import {
-  createExecutionService,
+  executeJobService,
   getJobExecutionService,
 } from "./execution.service.js";
 
-export const createExecution = AsyncHandler(async (req, res) => {
-  const { attempts } = req.body;
+export const executeJob = AsyncHandler(async (req, res) => {
   const { jobId } = req.params;
 
-  const execution = await createExecutionService(jobId, attempts);
+  const execution = await executeJobService(jobId);
 
-  return res.json(
-    new ApiResponse(201, execution, "Execution created successfully.")
-  );
+  return res.json(new ApiResponse(201, execution, "Execution Done."));
 });
 
 export const getJobExecution = AsyncHandler(async (req, res) => {
