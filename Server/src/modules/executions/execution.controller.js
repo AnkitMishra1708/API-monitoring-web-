@@ -7,9 +7,9 @@ import {
 export const executeJob = AsyncHandler(async (req, res) => {
   const { jobId } = req.params;
 
-  const execution = await executeJobService(jobId);
+  await executeJobService(jobId);
 
-  return res.json(new ApiResponse(201, execution, "Execution Done."));
+  return res.json(new ApiResponse(201, null, "Execution Done."));
 });
 
 export const getJobExecution = AsyncHandler(async (req, res) => {
@@ -18,6 +18,6 @@ export const getJobExecution = AsyncHandler(async (req, res) => {
   const execution = await getJobExecutionService(jobId);
 
   return res.json(
-    new ApiResponse(201, execution, "Execution fetched successfully.")
+    new ApiResponse(201, execution, "Execution fetched successfully."),
   );
 });

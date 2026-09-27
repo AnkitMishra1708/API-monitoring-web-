@@ -22,7 +22,7 @@ const executionSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Execution = mongoose.model("Execution", executionSchema);
