@@ -18,6 +18,6 @@ export const getJobExecution = AsyncHandler(async (req, res) => {
   const execution = await getJobExecutionService(jobId);
 
   return res.json(
-    new ApiResponse(201, execution, "Execution fetched successfully.")
+    new ApiResponse(201, execution, "Execution fetched successfully."),
   );
 });
