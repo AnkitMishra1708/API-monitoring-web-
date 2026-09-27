@@ -5,13 +5,13 @@ import { apiQueue } from "../../queue/api.queue.js";
 
 export const executeJobService = async (jobId) => {
   try {
-    const job = await Job.findById(jobId);
-
-    if (!job) {
-      throw new ApiError(400, "Job not found.");
-    }
-
-    await apiQueue.add("executeApi", job.url);
+    await apiQueue.add("executeApi", jobId, {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 5000,
+      },
+    });
   } catch (error) {
     if (error instanceof ApiError) throw error;
 
