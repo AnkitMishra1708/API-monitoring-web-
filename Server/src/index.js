@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import { app } from "./app.js";
-import { apiWorker } from "./worker/api.worker.js";
+import { apiWorker } from "./workers/api.worker.js";
 
 const port = process.env.PORT || 7777;
 
