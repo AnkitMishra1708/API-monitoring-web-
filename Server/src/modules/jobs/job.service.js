@@ -1,5 +1,6 @@
 import { ApiError } from "../../utils/index.js";
 import { Job } from "./job.model.js";
+import { scheduleNextExecution } from "../../schedulers/api.scheduler.js";
 
 export const createJobService = async (userId, data) => {
   try {
@@ -11,6 +12,12 @@ export const createJobService = async (userId, data) => {
       userId,
       ...data,
     });
+
+    if (!createdJob) {
+      throw new ApiError(500, "Failed to create job.");
+    }
+
+    await scheduleNextExecution(createdJob._id, createdJob.jobName, 0);
 
     return { createdJob };
   } catch (error) {

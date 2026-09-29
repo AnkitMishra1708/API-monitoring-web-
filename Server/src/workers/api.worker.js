@@ -2,11 +2,12 @@ import { Worker } from "bullmq";
 import { redis } from "../config/redis.js";
 import { Execution } from "../modules/executions/execution.model.js";
 import { Job } from "../modules/jobs/job.model.js";
+import { scheduleNextExecution } from "../schedulers/api.scheduler.js";
 
 export const apiWorker = new Worker(
   "monitor-api",
   async (redisData) => {
-    const job = await Job.findById(redisData.data);
+    const job = await Job.findById(redisData.data.jobId);
     let startTime;
     let response;
     let endTime;
@@ -55,7 +56,7 @@ export const apiWorker = new Worker(
 
     if (0 === redisData.attemptsMade) {
       await Execution.create({
-        jobId: job._id,``
+        jobId: job._id,
         status: response?.status < 400 ? "Success" : "Failed",
         attempts: [
           {
@@ -86,8 +87,12 @@ export const apiWorker = new Worker(
     }
 
     if ([500, 502, 503, 504].includes(response?.status)) {
-      throw new Error("Response server error");
+      if (2 > redisData.attemptsMade) {
+        throw new Error("Response server error");
+      }
     }
+
+    await scheduleNextExecution(job._id, job.jobName, job.monitorInterval);
   },
   {
     connection: redis,
