@@ -6,7 +6,7 @@ import {
   updateJobService,
   deleteJobService,
   pauseJobService,
-  resumeJobService,
+  activeJobService,
 } from "./job.service.js";
 
 export const createJob = AsyncHandler(async (req, res) => {
@@ -39,7 +39,7 @@ export const detailedJobById = AsyncHandler(async (req, res) => {
   const job = await detailedJobByIdService(id);
 
   return res.json(
-    new ApiResponse(200, job, "Detailed job fetch successfully.")
+    new ApiResponse(200, job, "Detailed job fetch successfully."),
   );
 });
 
@@ -77,11 +77,11 @@ export const pauseJob = AsyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, job, "Job pause successfully."));
 });
 
-export const resumeJob = AsyncHandler(async (req, res) => {
+export const activeJob = AsyncHandler(async (req, res) => {
   const userId = req.user.id;
   const { id } = req.params;
 
-  const job = await resumeJobService(userId, id);
+  const job = await activeJobService(userId, id);
 
   return res.json(new ApiResponse(200, job, "Job active successfully."));
 });

@@ -8,7 +8,7 @@ import {
   updateJob,
   deleteJob,
   pauseJob,
-  resumeJob,
+  activeJob,
 } from "./job.controller.js";
 
 const jobRoute = express.Router();
@@ -21,6 +21,6 @@ jobRoute.route("/detailedJobById/:id").get(verifyJwt, detailedJobById);
 jobRoute.route("/:id").patch(verifyJwt, validate(updateJobSchema), updateJob);
 jobRoute.route("/:id").delete(verifyJwt, deleteJob);
 jobRoute.route("/:id/pauseJob").patch(verifyJwt, pauseJob);
-jobRoute.route("/:id/resumeJob").patch(verifyJwt, resumeJob);
+jobRoute.route("/:id/activeJob").patch(verifyJwt, activeJob);
 
 export { jobRoute };

@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed:jobs": "node src/seeds/index.js jobs",
+    "seed:executions": "node src/seeds/index.js executions",
+    "seed:all": "node src/seeds/index.js all"
   },
   "keywords": [],
   "author": "Ankit",
