@@ -37,11 +37,8 @@ const jobSchema = new mongoose.Schema(
       enum: [5, 30, 60, 300, 600, 1800],
       default: 300,
     },
-    nextRunAt: {
-      type: Date,
-    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Job = mongoose.model("Job", jobSchema);

@@ -1,11 +1,7 @@
 import { apiQueue } from "../queues/api.queue.js";
 
-export const scheduleNextExecution = async (
-  jobId,
-  jobName,
-  monitorInterval,
-) => {
-  const scheduleId = `${jobName}-${jobId}`;
+export const scheduleNextExecution = async (jobId, monitorInterval) => {
+  const scheduleId = `monitor-${jobId}`;
   await apiQueue.add(
     scheduleId,
     {
@@ -22,4 +18,16 @@ export const scheduleNextExecution = async (
       removeOnComplete: true,
     },
   );
+};
+
+export const stopScheduler = async (jobId) => {
+  const scheduleId = `monitor-${jobId}`;
+
+  const job = await apiQueue.getJob(scheduleId);
+
+  if (job) {
+    await apiQueue.remove(scheduleId);
+  }
+
+  return;
 };

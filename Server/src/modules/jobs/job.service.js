@@ -1,6 +1,10 @@
 import { ApiError } from "../../utils/index.js";
 import { Job } from "./job.model.js";
-import { scheduleNextExecution } from "../../schedulers/api.scheduler.js";
+import { Execution } from "../executions/execution.model.js";
+import {
+  scheduleNextExecution,
+  stopScheduler,
+} from "../../schedulers/api.scheduler.js";
 
 export const createJobService = async (userId, data) => {
   try {
@@ -17,7 +21,7 @@ export const createJobService = async (userId, data) => {
       throw new ApiError(500, "Failed to create job.");
     }
 
-    await scheduleNextExecution(createdJob._id, createdJob.jobName, 0);
+    await scheduleNextExecution(createdJob._id, 0);
 
     return { createdJob };
   } catch (error) {
@@ -26,7 +30,7 @@ export const createJobService = async (userId, data) => {
     throw new ApiError(
       500,
       "Something went wrong while creating job.",
-      error.message
+      error.message,
     );
   }
 };
@@ -42,7 +46,7 @@ export const getMyJobsService = async (userId) => {
     throw new ApiError(
       500,
       "Something went wrong while creating job.",
-      error.message
+      error.message,
     );
   }
 };
@@ -58,7 +62,7 @@ export const detailedJobByIdService = async (id) => {
     throw new ApiError(
       500,
       "Something went wrong while fetching job by id.",
-      error.message
+      error.message,
     );
   }
 };
@@ -68,7 +72,7 @@ export const updateJobService = async (userId, jobId, data) => {
     const updatedJob = await Job.findOneAndUpdate(
       { _id: jobId, userId },
       { $set: data },
-      { returnDocument: "after", runValidators: true }
+      { returnDocument: "after", runValidators: true },
     );
 
     if (!updatedJob) {
@@ -82,13 +86,15 @@ export const updateJobService = async (userId, jobId, data) => {
     throw new ApiError(
       500,
       "Something went wrong while updating job.",
-      error.message
+      error.message,
     );
   }
 };
 
 export const deleteJobService = async (jobId) => {
   try {
+    await stopScheduler(jobId);
+    await Execution.deleteMany({ jobId: jobId });
     const deletedJob = await Job.deleteOne({ _id: jobId });
 
     return deletedJob;
@@ -98,7 +104,7 @@ export const deleteJobService = async (jobId) => {
     throw new ApiError(
       500,
       "Something went wrong while deleting job.",
-      error.message
+      error.message,
     );
   }
 };
@@ -108,8 +114,10 @@ export const pauseJobService = async (userId, jobId) => {
     const updatedJob = await Job.findOneAndUpdate(
       { _id: jobId, userId },
       { $set: { status: "Paused" } },
-      { returnDocument: "after", runValidators: true }
+      { returnDocument: "after", runValidators: true },
     );
+
+    await stopScheduler(updatedJob._id);
 
     return updatedJob;
   } catch (error) {
@@ -118,18 +126,20 @@ export const pauseJobService = async (userId, jobId) => {
     throw new ApiError(
       500,
       "Something went wrong while pausing job.",
-      error.message
+      error.message,
     );
   }
 };
 
-export const resumeJobService = async (userId, jobId) => {
+export const activeJobService = async (userId, jobId) => {
   try {
     const updatedJob = await Job.findOneAndUpdate(
       { _id: jobId, userId },
       { $set: { status: "Active" } },
-      { returnDocument: "after", runValidators: true }
+      { returnDocument: "after", runValidators: true },
     );
+
+    await scheduleNextExecution(updatedJob._id, 0);
 
     return updatedJob;
   } catch (error) {
@@ -137,8 +147,8 @@ export const resumeJobService = async (userId, jobId) => {
 
     throw new ApiError(
       500,
-      "Something went wrong while resuming job.",
-      error.message
+      "Something went wrong while activating job.",
+      error.message,
     );
   }
 };

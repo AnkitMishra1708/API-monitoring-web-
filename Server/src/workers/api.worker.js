@@ -13,6 +13,10 @@ export const apiWorker = new Worker(
     let endTime;
     let responseTime;
 
+    if (!job || job.status === "Paused") {
+      return;
+    }
+
     try {
       startTime = performance.now();
       response = await fetch(job.url);
@@ -92,7 +96,16 @@ export const apiWorker = new Worker(
       }
     }
 
-    await scheduleNextExecution(job._id, job.jobName, job.monitorInterval);
+    console.log(
+      redisData.name,
+      response.status,
+      response.statusText,
+      responseTime,
+    );
+
+    if (job.status === "Active") {
+      await scheduleNextExecution(job._id, job.monitorInterval);
+    }
   },
   {
     connection: redis,
