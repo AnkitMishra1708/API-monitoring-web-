@@ -5,6 +5,7 @@ import {
   logoutUserService,
   refreshAccessTokenService,
   changePasswordService,
+  deleteUserService,
 } from "./user.service.js";
 import { cookieOptions } from "../../config/cookie.js";
 
@@ -19,7 +20,7 @@ export const registerUser = AsyncHandler(async (req, res) => {
   });
 
   return res.json(
-    new ApiResponse(201, createdUser, "User created successfully.")
+    new ApiResponse(201, createdUser, "User created successfully."),
   );
 });
 
@@ -37,8 +38,8 @@ export const loginUser = AsyncHandler(async (req, res, next) => {
       new ApiResponse(
         200,
         { loggedInUser, accessToken },
-        "User loggedIn successfully."
-      )
+        "User loggedIn successfully.",
+      ),
     );
 });
 
@@ -55,7 +56,7 @@ export const logoutUser = AsyncHandler(async (req, res) => {
 
 export const getCurrentUser = AsyncHandler(async (req, res) => {
   return res.json(
-    new ApiResponse(200, req.user, "Current user fetched successfully.")
+    new ApiResponse(200, req.user, "Current user fetched successfully."),
   );
 });
 
@@ -76,8 +77,8 @@ export const refreshAccessToken = AsyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { accessToken, refreshToken: newRefreshToken },
-        "Access token refreshed."
-      )
+        "Access token refreshed.",
+      ),
     );
 });
 
@@ -91,8 +92,14 @@ export const changePassword = AsyncHandler(async (req, res) => {
   });
 
   return res.json(
-    new ApiResponse(200, data.updatedUser, "Password changed successfully.")
+    new ApiResponse(200, data.updatedUser, "Password changed successfully."),
   );
 });
 
-export const deleteUser = AsyncHandler(async (req, res) => {});
+export const deleteUser = AsyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  const data = await deleteUserService(userId);
+
+  return res.json(new ApiResponse(200, data, "User deleted successfully."));
+});

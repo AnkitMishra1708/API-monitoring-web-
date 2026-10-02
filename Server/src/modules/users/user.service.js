@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../../utils/index.js";
 import { User } from "./user.model.js";
+import { Job } from "../jobs/job.model.js";
+import { Execution } from "../executions/execution.model.js";
 
 export const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -23,7 +25,7 @@ export const generateAccessAndRefreshToken = async (userId) => {
     throw new ApiError(
       500,
       "Something went wrong while generating access or refresh token.",
-      error.message
+      error.message,
     );
   }
 };
@@ -46,7 +48,7 @@ export const registerUserService = async (data) => {
     });
 
     const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
+      "-password -refreshToken",
     );
 
     return { createdUser };
@@ -56,7 +58,7 @@ export const registerUserService = async (data) => {
     throw new ApiError(
       500,
       "Something went wrong while creating user.",
-      error.message
+      error.message,
     );
   }
 };
@@ -78,11 +80,11 @@ export const loginUserService = async (data) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      user._id
+      user._id,
     );
 
     const loggedInUser = await User.findById(user._id).select(
-      "-password -refreshToken"
+      "-password -refreshToken",
     );
 
     return { loggedInUser, accessToken, refreshToken };
@@ -92,7 +94,7 @@ export const loginUserService = async (data) => {
     throw new ApiError(
       500,
       "Something went wrong while login user.",
-      error.message
+      error.message,
     );
   }
 };
@@ -108,7 +110,7 @@ export const logoutUserService = async (userId) => {
       },
       {
         returnDocument: "after",
-      }
+      },
     );
 
     return;
@@ -118,7 +120,7 @@ export const logoutUserService = async (userId) => {
     throw new ApiError(
       500,
       "Something went wrong while logging out user.",
-      error.message
+      error.message,
     );
   }
 };
@@ -127,7 +129,7 @@ export const refreshAccessTokenService = async (incomingRefreshToken) => {
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      process.env.JWT_REFRESH_TOKEN_SECRET
+      process.env.JWT_REFRESH_TOKEN_SECRET,
     );
 
     const user = await User.findById(decodedToken?._id);
@@ -150,7 +152,7 @@ export const refreshAccessTokenService = async (incomingRefreshToken) => {
     throw new ApiError(
       500,
       "Something went wrong while refreshing access token.",
-      error.message
+      error.message,
     );
   }
 };
@@ -174,14 +176,14 @@ export const changePasswordService = async (userId, password) => {
     if (newPassword === currentPassword) {
       throw new ApiError(
         400,
-        "New password must be different from current password."
+        "New password must be different from current password.",
       );
     }
 
     if (newPassword !== confirmPassword) {
       throw new ApiError(
         401,
-        "New password and confirm password should be same."
+        "New password and confirm password should be same.",
       );
     }
 
@@ -189,7 +191,7 @@ export const changePasswordService = async (userId, password) => {
     await user.save();
 
     const updatedUser = await User.findById(user._id).select(
-      "-password -refreshToken"
+      "-password -refreshToken",
     );
 
     return { updatedUser };
@@ -199,7 +201,30 @@ export const changePasswordService = async (userId, password) => {
     throw new ApiError(
       500,
       "Something went wrong while changing password.",
-      error.message
+      error.message,
+    );
+  }
+};
+
+export const deleteUserService = async (userId) => {
+  try {
+    const job = await Job.findOne({ userId: userId });
+    await Execution.deleteMany({ jobId: job._id });
+    await Job.findByIdAndDelete(job._id);
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found.");
+    }
+
+    return user;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+
+    throw new ApiError(
+      500,
+      "Something went wrong while deleting user.",
+      error.message,
     );
   }
 };
