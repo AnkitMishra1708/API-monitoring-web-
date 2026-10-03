@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
+import PNG from "../../assets/WhiteLogo.png"
 
 function Wordmark() {
   return (
     <Link to="/" className="flex items-center gap-2.5 text-white">
-      <svg width="18" height="22" viewBox="0 0 18 22" aria-hidden="true">
-        <rect x="7" y="6" width="4" height="16" fill="currentColor" />
-        <rect x="3" y="2" width="12" height="4" fill="currentColor" />
-        <rect x="7" y="0" width="4" height="2" fill="#D4361C" />
-      </svg>
+      <p>
+        <img src={PNG} alt="" className="h-9 w-9" />
+      </p>
       <span className="text-[19px] font-bold tracking-tight text-white">
         WatchTower
       </span>
