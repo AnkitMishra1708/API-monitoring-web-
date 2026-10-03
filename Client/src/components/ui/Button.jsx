@@ -1,17 +1,13 @@
-export default function Button({
-  loading = false,
-  disabled,
-  children,
-  className = "",
-  ...props
-}) {
+export default function Button({ loading, children, className = "", ...props }) {
   return (
     <button
-      disabled={disabled || loading}
-      className={`h-12 w-full rounded-md bg-[#12161A] text-base font-medium text-[#EFF1EE] hover:bg-[#2a3138] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#12161A] disabled:opacity-60 ${className}`}
+      disabled={loading || props.disabled}
+      className={`w-full rounded-md bg-zinc-900 px-4 py-2.5 text-[15px] font-semibold text-white
+        hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2
+        disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       {...props}
     >
-      {loading ? "Please wait…" : children}
+      {loading ? "Please wait" : children}
     </button>
   );
 }

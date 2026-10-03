@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-    --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0a0a0a;
+  --color-paper: #fffef5;
+  --color-paper-deep: #fff6c9;
 }
 
 body {
-    @apply bg-white text-zinc-900 antialiased;
+  @apply bg-paper text-ink antialiased;
 }

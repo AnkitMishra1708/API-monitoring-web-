@@ -23,9 +23,8 @@ const Input = forwardRef(function Input(
           type={isPw && show ? "text" : type}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`h-12 w-full rounded-md border bg-white px-3.5 text-base text-[#12161A] outline-none focus:border-[#12161A] focus:ring-1 focus:ring-[#12161A] ${
-            error ? "border-[#D4361C]" : "border-[#CDD2D6]"
-          } ${isPw ? "pr-16" : ""} ${className}`}
+          className={`h-12 w-full rounded-md border bg-white px-3.5 text-base text-[#12161A] outline-none focus:border-[#12161A] focus:ring-1 focus:ring-[#12161A] ${error ? "border-[#D4361C]" : "border-[#CDD2D6]"
+            } ${isPw ? "pr-16" : ""} ${className}`}
           {...props}
         />
         {isPw && (
